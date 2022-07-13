@@ -16,8 +16,6 @@ class HtmlParser
 
         $results = array_count_values($matches[1]);
 
-        return new HtmlParsingResponse(
-            array_combine(array_keys($results), array_values($results))
-        );
+        return new HtmlParsingResponse($results);
     }
 }
