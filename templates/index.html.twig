@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Parser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h3>Web Parser</h3>
+
+    <form method="post" action="/" class="mt-2">
+        <div class="form-group">
+            <input type="text" class="form-control" name="webUrl" placeholder="Web url">
+        </div>
+        <br/>
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    {% if htmlTags %}
+        <h3 class="mt-5">Parsed HTML elements:</h3>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Element</th>
+                <th scope="col">Count</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for elem, count in htmlTags %}
+                <tr>
+                    <td>{{ elem }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

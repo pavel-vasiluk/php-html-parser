@@ -20,9 +20,7 @@ RUN set -eux; \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# AMQP
-RUN pecl install amqp
-RUN docker-php-ext-enable amqp
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 RUN chown www-data:www-data /var/www
 

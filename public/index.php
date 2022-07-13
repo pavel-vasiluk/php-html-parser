@@ -2,10 +2,16 @@
 
 declare(strict_types=1);
 
-use App\Kernel;
+use App\Controller\MainController;
 
-require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
-return function (array $context) {
-    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
-};
+$controller = new MainController();
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+if ('/' === $uri) {
+    echo $controller->index();
+} else {
+    header('HTTP/1.1 404 Not Found');
+    echo '<html><body><h1>Page Not Found</h1></body></html>';
+}

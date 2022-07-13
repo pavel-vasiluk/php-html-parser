@@ -4,22 +4,37 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Component\Request\Template\VerificationCodeTemplateRequest;
-use App\Service\TemplateService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Service\HtmlParser;
+use App\Service\TwigRenderer;
+use App\Service\UrlValidator;
 
-class TemplateController extends AbstractController
+class MainController
 {
-    #[Route('/templates/render', name: 'templates_render', methods: [Request::METHOD_POST])]
-    public function renderTemplate(
-        VerificationCodeTemplateRequest $request,
-        TemplateService $templateService
-    ): Response {
-        $templateResponse = $templateService->resolveVerificationCodeTemplate($request);
+    private HtmlParser $htmlParser;
+    private TwigRenderer $twigRenderer;
+    private UrlValidator $urlValidator;
 
-        return $this->render($templateResponse->getTemplate(), ['code' => $templateResponse->getCode()]);
+    public function __construct()
+    {
+        $this->htmlParser = new HtmlParser();
+        $this->twigRenderer = new TwigRenderer();
+        $this->urlValidator = new UrlValidator();
+    }
+
+    public function index(): string
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $url = $_POST["webUrl"] ?? '';
+
+            if (!$this->urlValidator->isUrlValid($url)) {
+                return $this->twigRenderer->renderTemplate('index', ['error' => 'Invalid url provided.']);
+            }
+
+            $htmlParserResponse = $this->htmlParser->parseHtmlTagsFromUrl($url);
+
+            return $this->twigRenderer->renderTemplate('index', ['htmlTags' => $htmlParserResponse->getItems()]);
+        }
+
+        return $this->twigRenderer->renderTemplate('index');
     }
 }
